@@ -5,6 +5,7 @@ const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
 
 export default {
   entry: './src/index.ts',
+  target: 'node',
   module: {
     rules: [
       {

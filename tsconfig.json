@@ -4,7 +4,12 @@
     "module": "ESNext",
     "outDir": "./dist",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noEmit": false,
+    "moduleResolution": "Bundler",
+    "composite": true,
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": true
   },
   "ts-node": {
     "esm": true

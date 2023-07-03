@@ -12,9 +12,5 @@ dbProcess.on('message', ((data: any) => {
   serverProcess.send(data);
 }))
 
-// process.on('SIGINT', () => {
-//   server.close(() => process.exit());
-// });
-
 
 

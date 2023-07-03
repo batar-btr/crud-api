@@ -20,9 +20,7 @@ if (cluster.isPrimary) {
   const workers = cluster.workers;
 
   cluster.on('message', (worker, data) => {
-    console.log(data);
-    console.log(worker.id);
-    dbProcess.send({...data, workerId: worker.id});
+    dbProcess.send({ ...data, workerId: worker.id });
   })
 
   dbProcess.on('message', ((data: any) => {
@@ -30,11 +28,28 @@ if (cluster.isPrimary) {
     worker?.send(data);
   }))
 
+  let currentWorkerId = AP - 1;
+
   const loadBalancer = createServer((req, res) => {
-    console.log(req)
+
+
+    currentWorkerId = ((currentWorkerId + 1) % AP);
+    const options = {
+      method: req.method,
+      headers: req.headers,
+    }
+    const redirectUrl = `http://localhost:${+port + currentWorkerId + 1}/api/users`;
+    console.log(`Load balancer redirect reques to: ${redirectUrl}`);
+
+    const proxyReq = http.request(redirectUrl, options, proxyRes => {
+      res.writeHead(proxyRes.statusCode!, proxyRes.headers);
+      proxyRes.pipe(res);
+    })
+    req.pipe(proxyReq);
+
   }).listen(port, () => console.log(`Loadbalancer on port: ${port}`));
 
-  
+
 } else {
   const serverPort = cluster.worker?.id! + +port;
   const server = customServer().listen(serverPort, () => console.log(`Server listen on: ${serverPort}`))

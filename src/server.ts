@@ -22,7 +22,6 @@ const customServer = () => createServer((req, res) => {
         req.on('end', () => {
           process.send && process.send({ method, data: JSON.parse(body) })
         })
-        console.log('POST')
       }
       if (method === 'PUT') {
         let body = '';

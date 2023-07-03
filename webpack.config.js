@@ -1,9 +1,9 @@
-import path from 'path';
-import url from 'url';
+// import path from 'path';
+// import url from 'url';
 
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
-
-export default {
+// const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const path = require('path');
+module.exports = {
   entry: './src/index.ts',
   target: 'node',
   module: {

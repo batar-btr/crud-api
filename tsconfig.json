@@ -1,18 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "ESNext",
-    "outDir": "./dist",
-    "strict": true,
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "target": "ES6",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "removeComments": true,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
-    "noEmit": false,
-    "moduleResolution": "Bundler",
-    "composite": true,
-    "emitDeclarationOnly": true,
-    "allowImportingTsExtensions": true
-  },
-  "ts-node": {
-    "esm": true
+    "strict": true
   },
   "include": [
     "./src/**/*.ts"

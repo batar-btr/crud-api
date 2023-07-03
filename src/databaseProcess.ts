@@ -1,6 +1,4 @@
-import { v4 as uuidv4, validate as isUuid } from 'uuid';
-
-console.log('From database', process.pid)
+const { v4: uuidv4, validate: isUuid } = require('uuid');
 
 interface UserData {
   username: string;
@@ -19,24 +17,7 @@ class UsersDB {
   users: User[]
 
   constructor() {
-    this.users = [
-      {
-        "username": "John",
-        "age": 25,
-        "hobbies": [
-          "sport"
-        ],
-        "id": "611d3866-9129-48a8-81dd-53fce983f966"
-      },
-      {
-        "username": "Peter",
-        "age": 25,
-        "hobbies": [
-          "sport"
-        ],
-        "id": "b0c9d7aa-47c9-42a5-baf9-dd3494f7233a"
-      }
-    ]
+    this.users = []
   }
 
   getAllUsers() {
@@ -94,30 +75,32 @@ class UsersDB {
 interface DBRequest {
   method: string;
   uuid?: string;
-  data?: UserData
+  data?: UserData;
+  workerId?: number;
 }
 
 export interface DBResponse {
   code: number;
   data?: {};
   message?: string;
+  workerId?: number;
 }
 
 const userDB = new UsersDB();
 
 process.on('message', (req: DBRequest) => {
-  const { method, uuid, data } = req;
+  const { method, uuid, data, workerId } = req;
 
   if (method === 'GET' && !uuid) {
-    process.send && process.send(userDB.getAllUsers());
+    process.send && process.send({...userDB.getAllUsers(), workerId });
   } else if (method === 'GET' && uuid) {
-    process.send && process.send(userDB.getUser(uuid));
+    process.send && process.send({...userDB.getUser(uuid), workerId});
   } else if (method === 'POST') {
-    process.send && process.send(userDB.addUser(data!));
+    process.send && process.send({...userDB.addUser(data!), workerId});
   } else if (method === 'PUT') {
-    process.send && process.send(userDB.updateUser(uuid!, data!));
+    process.send && process.send({...userDB.updateUser(uuid!, data!), workerId});
   } else if (method === 'DELETE') {
-    process.send && process.send(userDB.deleteUser(uuid!));
+    process.send && process.send({...userDB.deleteUser(uuid!), workerId});
   }
 
 });

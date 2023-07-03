@@ -1,15 +1,16 @@
 import { createServer } from 'http';
-import { checkUrl } from './utils/checkURL.ts';
-import { DBResponse } from './databaseProcess.ts';
+import { checkUrl } from './utils/checkURL';
+import { DBResponse } from './databaseProcess';
 
 const customServer = () => createServer((req, res) => {
   try {
     const method = req.method!;
     const [, , , id] = req.url?.split('/')!;
 
-    if(Math.random() > 0.5) {
-      throw new Error();
-    }
+    // if(Math.random() > 0.5) {
+    //   throw new Error();
+    // }
+    // if you want check random server internal error to see code 500 uncomment this
 
     if (checkUrl(req.url!)) {
       if (method === 'GET') {

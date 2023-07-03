@@ -1,8 +1,10 @@
 import cluster from 'node:cluster';
-import http from 'node:http';
+import http, { createServer } from 'node:http';
+require('dotenv').config();
 import { availableParallelism } from 'node:os';
 import process from 'node:process';
 import { fork } from 'child_process';
+import customServer from './server';
 
 const port = process.env.START_PORT!;
 
@@ -10,12 +12,30 @@ if (cluster.isPrimary) {
 
   const dbProcess = fork('./src/databaseProcess.ts');
 
-  console.log(`Primary ${process.pid} is running`);
-  const AP = availableParallelism();
+  const AP = availableParallelism() - 1;
+
   for (let i = 0; i < AP; i++) {
     cluster.fork();
-    dbProcess.send(Math.random())
   }
+  const workers = cluster.workers;
+
+  cluster.on('message', (worker, data) => {
+    console.log(data);
+    console.log(worker.id);
+    dbProcess.send({...data, workerId: worker.id});
+  })
+
+  dbProcess.on('message', ((data: any) => {
+    const worker = workers?.[data.workerId];
+    worker?.send(data);
+  }))
+
+  const loadBalancer = createServer((req, res) => {
+    console.log(req)
+  }).listen(port, () => console.log(`Loadbalancer on port: ${port}`));
+
+  
 } else {
-  console.log(`Worker ${process.pid} started`);
+  const serverPort = cluster.worker?.id! + +port;
+  const server = customServer().listen(serverPort, () => console.log(`Server listen on: ${serverPort}`))
 }

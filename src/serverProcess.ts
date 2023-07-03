@@ -1,6 +1,6 @@
-import customServer from './server.ts';
-
-console.log('server process', process.pid)
+import customServer from './server';
+require('dotenv').config();
+const port = process.env.START_PORT! || 4040;
 
 const server = customServer()
-server.listen(4040, () => console.log('Server run on 4040'));
+server.listen(port, () => console.log(`Server run on ${port}`));

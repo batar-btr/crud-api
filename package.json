@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start:dev": "nodemon ./src/index.ts",
+    "start:prod": "npm run build && node ./dist/bundle.js",
     "start:multi": "nodemon --exec ts-node ./src/multi.ts",
     "build": "webpack --mode=production",
     "test": "jest"
